@@ -1,7 +1,7 @@
 #include "MyController.h"
 
 MyController::MyController(MyConfig& config)
-    : MainController(config), myConfig(config), somfyDevice(new SomfyDevice("vr1", config, eventManager, EMITTER_GPIO, REMOTE))
+    : MainController(config), myConfig(config), somfyDevice(new SomfyDevice("somfy", config, eventManager, EMITTER_GPIO))
 {
     addDevice(somfyDevice);
 }
@@ -10,9 +10,9 @@ void MyController::init()
 {
     MainController::init();
 
-
-    config.setPreference("debug_level", 3);
-    config.setPreference("hostname", "SomfyRemote");
+    somfyDevice->init();
+    int8_t num = somfyDevice->addRemote("Volet Salon Gauche", "volet/salon_gauche");
+    eventManager.debug("Remote added: #" + String(num), 1);
 }
 
 void MyController::loop()

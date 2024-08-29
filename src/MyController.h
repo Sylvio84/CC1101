@@ -8,7 +8,6 @@
 #include "config.h"
 
 #define EMITTER_GPIO 2
-#define REMOTE 0x5184c8
 
 class MyController : public MainController
 {

@@ -4,6 +4,7 @@
 #ifndef MYCONFIG_H
 #define MYCONFIG_H
 
+
 class MyConfig : public Configuration
 {
 private:
@@ -14,6 +15,11 @@ public:
     {
         HOSTNAME = "TEST_CC1101";
     }
+
+    /*getSomfyRemote()
+    {
+
+    }*/
    
 };
 
