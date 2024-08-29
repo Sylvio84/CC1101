@@ -1,7 +1,8 @@
 #include "MyController.h"
 
 #define EMITTER_GPIO 2
-#define REMOTE 0x100010
+//#define REMOTE 0x100010
+#define REMOTE 0x5184c8
 
 #define CC1101_FREQUENCY 433.42
 

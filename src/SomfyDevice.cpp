@@ -6,8 +6,9 @@ void SomfyDevice::init()
     pinMode(emitterPin, OUTPUT);
 
     // to remove:
-    config.setPreference(id + "_rcode", 1);
-    eventManager->debug("Rolling code reseted", 1);
+    uint16_t newCode = 40;
+    config.setPreference(id + "_rcode", newCode);
+    eventManager->debug("Rolling code reseted to "  + newCode, 1);
 }
 
 bool SomfyDevice::processCommand(String command, std::vector<String> params)
@@ -50,6 +51,18 @@ void SomfyDevice::printFrame(byte *frame) {
 	Serial.println();
 }
 
+String SomfyDevice::getFrameString(byte *frame) {
+    String result = "";
+    for (byte i = 0; i < 7; i++) {
+        if (frame[i] >> 4 == 0) {  //  Displays leading zero in case the most significant
+            result += "0";     // nibble is a 0.
+        }
+        result += String(frame[i], HEX);
+        result += " ";
+    }
+    return result;
+}
+
 void SomfyDevice::buildFrame(byte *frame, SomfyCommand command, uint16_t code) {
 	const byte button = static_cast<byte>(command);
 	frame[0] = 0xA7;          // Encryption key. Doesn't matter much
@@ -64,6 +77,7 @@ void SomfyDevice::buildFrame(byte *frame, SomfyCommand command, uint16_t code) {
 	Serial.print("Frame         : ");
 	printFrame(frame);
 #endif
+    eventManager->debug("Frame         : " + getFrameString(frame), 3);
 
 	// Checksum calculation: a XOR of all the nibbles
 	byte checksum = 0;
@@ -79,6 +93,7 @@ void SomfyDevice::buildFrame(byte *frame, SomfyCommand command, uint16_t code) {
 	Serial.print("With checksum : ");
 	printFrame(frame);
 #endif
+    eventManager->debug("With checksum : " + getFrameString(frame), 3);
 
 	// Obfuscation: a XOR of all the bytes
 	for (byte i = 1; i < 7; i++) {
@@ -89,6 +104,7 @@ void SomfyDevice::buildFrame(byte *frame, SomfyCommand command, uint16_t code) {
 	Serial.print("Obfuscated    : ");
 	printFrame(frame);
 #endif
+    eventManager->debug("Obfuscated    : " + getFrameString(frame), 3);
 }
 
 void SomfyDevice::sendFrame(byte *frame, byte sync) {

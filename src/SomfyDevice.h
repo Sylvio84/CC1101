@@ -27,6 +27,7 @@ private:
 	void buildFrame(byte *frame, SomfyCommand command, uint16_t code);
 	void sendFrame(byte *frame, byte sync);
 	void printFrame(byte *frame);
+    String getFrameString(byte *frame);
 
 	void sendHigh(uint16_t durationInMicroseconds);
 	void sendLow(uint16_t durationInMicroseconds);
