@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Configuration.h>
 #include <Device.h>
+#include <ELECHOUSE_CC1101_SRC_DRV.h>
 
 enum class SomfyCommand : byte {
 	My = 0x1,
@@ -17,10 +18,13 @@ enum class SomfyCommand : byte {
 	Flag = 0xA
 };
 
+
+#define CC1101_FREQUENCY 433.42
+
 class SomfyDevice : public Device
 {
 private:
-    byte emitterPin = 0;
+    byte emitterPin = 2;
 
     uint32_t remote = 0;
 
@@ -40,7 +44,7 @@ private:
 
 public:
 
-    SomfyDevice(String id, Configuration &config, EventManager &eventMgr, int emitterPin, int remote) : Device(id, config, eventMgr)
+    SomfyDevice(String id, Configuration &config, EventManager &eventMgr, byte emitterPin, uint32_t remote) : Device(id, config, eventMgr)
     {
         this->emitterPin = emitterPin;
         this->remote = remote;
@@ -52,7 +56,7 @@ public:
 
 
     void sendSomfyCommand(SomfyCommand command, int repeat = 4);
-    void sendSomfyCommand(const String &string, int repeat = 4);
+    //void sendSomfyCommand(const String &string, int repeat = 4);
 
     
 };

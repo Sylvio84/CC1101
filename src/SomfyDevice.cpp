@@ -3,12 +3,16 @@
 void SomfyDevice::init()
 {
     eventManager->debug("Init Somfy device", 1);
+    ELECHOUSE_cc1101.Init();
+    ELECHOUSE_cc1101.setMHZ(CC1101_FREQUENCY);
+
     pinMode(emitterPin, OUTPUT);
+	digitalWrite(emitterPin, LOW);
 
     // to remove:
-    uint16_t newCode = 40;
+    uint16_t newCode = 42;
     config.setPreference(id + "_rcode", newCode);
-    eventManager->debug("Rolling code reseted to "  + newCode, 1);
+    eventManager->debug("Rolling code reseted to "  + String(newCode), 1);
 }
 
 bool SomfyDevice::processCommand(String command, std::vector<String> params)
@@ -30,6 +34,7 @@ uint16_t SomfyDevice::nextCode()
 }
 
 void SomfyDevice::sendSomfyCommand(SomfyCommand command, int repeat) {
+    ELECHOUSE_cc1101.SetTx();
     eventManager->debug("Sending Somfy command: " + String(static_cast<byte>(command), HEX), 3);
 	const uint16_t rollingCode = nextCode();
 	byte frame[7];
@@ -38,6 +43,7 @@ void SomfyDevice::sendSomfyCommand(SomfyCommand command, int repeat) {
 	for (int i = 0; i < repeat; i++) {
 		sendFrame(frame, 7);
 	}
+    ELECHOUSE_cc1101.setSidle();
 }
 
 void SomfyDevice::printFrame(byte *frame) {
