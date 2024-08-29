@@ -24,8 +24,6 @@ private:
 
     uint32_t remote = 0;
 
-    uint16_t code = 0;
-
 	void buildFrame(byte *frame, SomfyCommand command, uint16_t code);
 	void sendFrame(byte *frame, byte sync);
 	void printFrame(byte *frame);
@@ -47,8 +45,7 @@ public:
         this->remote = remote;
     };
 
-    void SomfyDevice::init() override;
-
+    void init() override;
 
     bool processCommand(String command, std::vector<String> params) override;
 

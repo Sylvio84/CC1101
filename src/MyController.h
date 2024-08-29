@@ -5,12 +5,12 @@
 #include <Configuration.h>
 #include <MainController.h>
 //#include <NVSRollingCodeStorage.h>
-#include <EEPROM.h>
-#include <EEPROMRollingCodeStorage.h>
+//#include <EEPROM.h>
+//#include <EEPROMRollingCodeStorage.h>
 #include <ELECHOUSE_CC1101_SRC_DRV.h>
-#include <SomfyRemote.h>
+//#include <SomfyRemote.h>
+#include "SomfyDevice.h"
 #include "config.h"
-
 
 class MyController : public MainController
 {
@@ -22,8 +22,9 @@ class MyController : public MainController
     uint8_t wifiStatus = 0;
     */
     //NVSRollingCodeStorage rollingCodeStorage;
-    EEPROMRollingCodeStorage rollingCodeStorage;
-    SomfyRemote somfyRemote;
+    /*EEPROMRollingCodeStorage rollingCodeStorage;
+    SomfyRemote somfyRemote;*/
+    SomfyDevice* somfyDevice;
 
    public:
     MyController(MyConfig& config);
@@ -33,9 +34,9 @@ class MyController : public MainController
 
     /*void processEvent(String type, String action, std::vector<String> params) override;
     void processMQTT(String topic, String value) override;    */
-    void processCommand(String command, std::vector<String> params) override;
+    //void processCommand(String command, std::vector<String> params) override;
 
-    void sendCC1101Command(String cmd);
+    //void sendCC1101Command(String cmd);
 };
 
 #endif

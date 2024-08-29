@@ -2,12 +2,18 @@
 
 void SomfyDevice::init()
 {
+    eventManager->debug("Init Somfy device", 1);
     pinMode(emitterPin, OUTPUT);
+
+    // to remove:
+    config.setPreference(id + "_rcode", 1);
+    eventManager->debug("Rolling code reseted", 1);
 }
 
 bool SomfyDevice::processCommand(String command, std::vector<String> params)
 {
     if (command == "Up" || command == "Down" || command == "Stop" || command == "Prog") {
+        eventManager->debug("Somfy command received: " + command, 1);
         sendSomfyCommand(getSomfyCommand(command));
         return true;
     }
@@ -16,13 +22,14 @@ bool SomfyDevice::processCommand(String command, std::vector<String> params)
 
 uint16_t SomfyDevice::nextCode()
 {
-    config.getPreference(id+ "_rcode", code);
-    eventManager->debug("Rolling code: " + String(code), 1);
+    uint16_t code = config.getPreference(id+ "_rcode", 1);
+    eventManager->debug("Rolling code: " + String(code), 2);
     config.setPreference(id + "_rcode", code + 1);
     return code;
 }
 
 void SomfyDevice::sendSomfyCommand(SomfyCommand command, int repeat) {
+    eventManager->debug("Sending Somfy command: " + String(static_cast<byte>(command), HEX), 3);
 	const uint16_t rollingCode = nextCode();
 	byte frame[7];
 	buildFrame(frame, command, rollingCode);
