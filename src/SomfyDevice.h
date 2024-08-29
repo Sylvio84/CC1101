@@ -47,7 +47,7 @@ public:
         this->remote = remote;
     };
 
-    void SomfyDevice::init() override;
+    void init() override;
 
 
     bool processCommand(String command, std::vector<String> params) override;
