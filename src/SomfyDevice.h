@@ -4,58 +4,43 @@
 #include <Arduino.h>
 #include <Configuration.h>
 #include <Device.h>
+#include <ELECHOUSE_CC1101_SRC_DRV.h>
+#include <vector>
+#include "SomfyRemote.h"
 
-enum class SomfyCommand : byte {
-	My = 0x1,
-	Up = 0x2,
-	MyUp = 0x3,
-	Down = 0x4,
-	MyDown = 0x5,
-	UpDown = 0x6,
-	Prog = 0x8,
-	SunFlag = 0x9,
-	Flag = 0xA
-};
+#define CC1101_FREQUENCY 433.42
+
+enum class SomfyCommand : byte { My = 0x1, Up = 0x2, MyUp = 0x3, Down = 0x4, MyDown = 0x5, UpDown = 0x6, Prog = 0x8, SunFlag = 0x9, Flag = 0xA };
 
 class SomfyDevice : public Device
 {
-private:
-    byte emitterPin = 0;
+  private:
+  
+    byte emitterPin = 2;
 
-    uint32_t remote = 0;
+    uint32_t remoteStart = 0x100010;
 
-    uint16_t code = 0;
+    // collection of SomfyRemote objects
+    std::vector<SomfyRemote> remotes;
 
-	void buildFrame(byte *frame, SomfyCommand command, uint16_t code);
-	void sendFrame(byte *frame, byte sync);
-	void printFrame(byte *frame);
+    uint16_t getNextRollingCode(uint8_t num, bool save = true);
 
-	void sendHigh(uint16_t durationInMicroseconds);
-	void sendLow(uint16_t durationInMicroseconds);
+    SomfyCommand getSomfyCommand(const String& string);
 
-    uint16_t nextCode();
-
-    SomfyCommand getSomfyCommand(const String &string);
-
-    const uint16_t SYMBOL = 640;  // µs
-
-public:
-
-    SomfyDevice(String id, Configuration &config, EventManager &eventMgr, int emitterPin, int remote) : Device(id, config, eventMgr)
-    {
-        this->emitterPin = emitterPin;
-        this->remote = remote;
-    };
+  public:
+    SomfyDevice(String id, Configuration& config, EventManager& eventMgr, byte emitterPin) : Device(id, config, eventMgr), emitterPin(emitterPin) {}
 
     void init() override;
-
+    bool setRemoteStart(uint32_t remoteStart);
 
     bool processCommand(String command, std::vector<String> params) override;
+    bool processMQTT(String topic, String value) override;
 
+    int8_t addRemote(String name, String topic, uint8_t num = 0, uint32_t remoteAddr = 0);
 
-    void sendSomfyCommand(SomfyCommand command, int repeat = 4);
-    void sendSomfyCommand(const String &string, int repeat = 4);
+    SomfyRemote* getRemote(uint8_t num);
 
-    
+    void sendSomfyCommand(uint8_t numRemote, SomfyCommand command, uint8_t repeat = 4);
 };
-#endif
+
+#endif  // SOMFYDEVICE_H
